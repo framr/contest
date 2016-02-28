@@ -20,7 +20,7 @@ if __name__ == '__main__':
     stats = {}
     offer_map = {}
     for line in open(input_filename):
-        splitted = line.strip().split()
+        splitted = line.strip().split('\t')
 
         try:
             rec = Record(*splitted)
