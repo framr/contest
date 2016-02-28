@@ -34,7 +34,7 @@ if __name__ == '__main__':
             stats[full_offer] = stats.get(full_offer, 0) + 1
 
     for i, offer in enumerate(sorted(stats, key=stats.__getitem__, reverse=True)):
-        print "%d\t%s\t%s\t%s" % (i, offer_map[offer][0], offer_map[offer][1], offer, stats[offer])
+        print "%d\t%s\t%s\t%s" % (i, offer_map[offer][0], offer_map[offer][1], stats[offer])
 
 
     #mmh3.hash128("%s_%s" % ()), counter_data[offer])
