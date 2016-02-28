@@ -21,12 +21,7 @@ if __name__ == '__main__':
     offer_map = {}
     for line in open(input_filename):
         splitted = line.strip().split('\t')
-
-        try:
-            rec = Record(*splitted)
-        except:
-            print splitted
-            raise
+        rec = Record(*splitted)
         offers = [offer for offer in rec.offers.strip().split() if offer.isdigit()]
         for offer in offers:
             full_offer = "%s_%s" % (rec.counter_id, offer)
