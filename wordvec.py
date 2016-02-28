@@ -9,10 +9,10 @@ Mikolov-style word embeddings.
 
 from keras.models import Sequential
 from keras.layers import Embedding, Merge
-from keras 
+from keras.preprocessing import sequence
 
 word = Sequential()
-word.add(Embedding(max_feature,vector_dim, init='uniform'))
+word.add(Embedding(max_feature, vector_dim, init='uniform'))
 context = Sequential()
 context.add(Embedding(max_feature,vector_dim, init='uniform'))
 model = Sequential()

@@ -17,13 +17,18 @@ if __name__ == '__main__':
 
     meta = RecordMeta(open(meta_filename).readline().strip().split())
     Record = make_record_cls(meta.fields())
-    stats = defaultdict(dict)
+    stats = {}
+    offer_map = {}
     for line in open(input_filename):
         rec = Record(*line.strip().split())
         offers = [offer for offer in rec.offers.strip().split()]
         for offer in offers:
-            stats[rec.counter_id][offer] = stats[rec.counter_id].get(offer, 0) + 1
+            full_offer = "%s_%s" % (rec.counter_id, offer)
+            offer_map[full_offer] = (rec.counter_id, offer)
+            stats[full_offer] = stats.get(full_offer, 0) + 1
 
-    for counter, counter_data in stats.iteritems():
-        for offer in sorted(counter_data, key=counter_data.__getitem__, reverse=True):
-            print "%s\t%s\t%s\n" % (counter, offer, mmh3.hash128("%s_%s" % ()), counter_data[offer])
+    for i, offer in enumerate(sorted(stats, key=stats.__getitem__, reverse=True)):
+        print "%d\t%s\t%s\t%s" % (i, offer_map[offer][0], offer_map[offer][1], offer, stats[offer])
+
+
+    #mmh3.hash128("%s_%s" % ()), counter_data[offer])
