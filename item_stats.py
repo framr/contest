@@ -27,14 +27,15 @@ if __name__ == '__main__':
         except:
             print splitted
             raise
-        offers = [offer for offer in rec.offers.strip().split()]
+        offers = [offer for offer in rec.offers.strip().split() if offer.isdigit()]
         for offer in offers:
             full_offer = "%s_%s" % (rec.counter_id, offer)
             offer_map[full_offer] = (rec.counter_id, offer)
             stats[full_offer] = stats.get(full_offer, 0) + 1
 
     for i, offer in enumerate(sorted(stats, key=stats.__getitem__, reverse=True)):
-        print "%d\t%s\t%s\t%s" % (i, offer_map[offer][0], offer_map[offer][1], stats[offer])
+        offer_hash = mmh3.hash128("%s_%s" % (offer_map[offer][0], offer_map[offer][1]))
+        print "%d\t%s\t%s\t%s\t%s" % (i, offer_map[offer][0], offer_map[offer][1], offer_hash, stats[offer])
 
 
     #mmh3.hash128("%s_%s" % ()), counter_data[offer])
