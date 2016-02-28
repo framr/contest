@@ -20,7 +20,13 @@ if __name__ == '__main__':
     stats = {}
     offer_map = {}
     for line in open(input_filename):
-        rec = Record(*line.strip().split())
+        splitted = line.strip().split()
+
+        try:
+            rec = Record(*splitted)
+        except:
+            print splitted
+            raise
         offers = [offer for offer in rec.offers.strip().split()]
         for offer in offers:
             full_offer = "%s_%s" % (rec.counter_id, offer)
