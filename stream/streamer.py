@@ -116,9 +116,10 @@ class TokenizeTextStreamer(object):
         pass
 
 
+
 class SkipGramStreamer(object):
     def __init__(self, context_streamer, neg_pairs=1.0, window_size=5, min_window_size=None,
-        sampling_table=None, feature_map=None, shuffle=True):
+        sampling_table=None, feature_map=None, shuffle=True, min_shows=None, ):
         """
         :param context_streamer:
         :param feature_map: if provided, remap words according to mapping

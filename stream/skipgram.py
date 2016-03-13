@@ -34,15 +34,15 @@ if __name__ == '__main__':
     meta = RecordMeta(open(meta_file).readline().strip().split())
 
 
-    stream_gen = stream_generator(args.input, meta=meta, field=args.field, session=True)
+    stream_gen = stream_generator(args.input, meta=meta, field=args.field, session=args.session)
     context_streamer = SessionContextStreamer(stream_gen)
 
-    feature_map = read_feature_map(args.sampling_table)
+    #feature_map = read_feature_map(args.sampling_table)
     sampling_table = read_sampling_table(args.sampling_table)
 
     skipgram_streamer = SkipGramStreamer(context_streamer, neg_pairs=args.neg_pairs, window_size=args.window_size,
         feature_map=, sampling_table=)
-    batch_streamer = Batch2BatchStreamer(skipgram_streamer, batch_size=args.batch_size)
+    #batch_streamer = Batch2BatchStreamer(skipgram_streamer, batch_size=args.batch_size)
 
     sampling_table = preprocessing.read_sampling_table()
     num_features = len(sampling_table)
@@ -50,4 +50,8 @@ if __name__ == '__main__':
     for i, seq in enumerate(streamer):
         # get skipgram couples for one text in the dataset
         couples, labels = sequence.skipgrams(seq)
+
+
+
+
 
