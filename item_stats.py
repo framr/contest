@@ -7,7 +7,7 @@ import mmh3
 from collections import defaultdict
 
 
-from tabutils import RecordMeta, make_record_cls
+from tabtools.tabutils import RecordMeta, make_record_cls
 
 if __name__ == '__main__':
 

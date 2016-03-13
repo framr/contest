@@ -7,7 +7,7 @@ import os
 from itertools import chain
 
 
-from tabutils import make_record_cls
+from tabtools.tabutils import make_record_cls
 
 def stream_generator(filename, meta=None, field=None, session=False):
     """

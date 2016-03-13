@@ -5,11 +5,11 @@ __author__ = 'fram'
 import sys
 import os
 from argparse import ArgumentParser
-
-
-from session import sessions_iter
-from tabutils import make_record_cls, RecordMeta
 from itertools import groupby
+
+
+from stream.session import sessions_iter
+from tabtools.tabutils import make_record_cls, RecordMeta
 
 if __name__ == '__main__':
 

@@ -17,9 +17,9 @@ from keras.preprocessing import sequence
 from keras.optimizers import SGD
 
 
-from streamer import SymmetricContextStreamer, SessionContextStreamer, stream_generator, Batch2BatchStreamer, SkipGramStreamer
-from tabutils import RecordMeta
-from preprocessing import read_sampling_table, read_feature_map
+from stream.streamer import SymmetricContextStreamer, SessionContextStreamer, stream_generator, Batch2BatchStreamer, SkipGramStreamer
+from tabtools.tabutils import RecordMeta
+from preprocess.preprocessing import read_sampling_table, read_feature_map
 
 
 if __name__ == '__main__':
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     num_features = ...
 
     word_layer = Sequential()
-    word_layer.add(Embedding(num_features, embedding_dim, init='uniform'))
+    word_layer.add(Embedding(num_features, embedding_dim, ini t='uniform'))
     context_layer = Sequential()
     context_layer.add(Embedding(num_features, embedding_dim, init='uniform'))
     model = Sequential()

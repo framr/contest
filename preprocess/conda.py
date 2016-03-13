@@ -2,13 +2,12 @@
 __author__ = 'fram'
 import os
 import sys
-from tabutils import make_record_cls, RecordMeta
 from itertools import groupby
 from datetime import datetime
 
-
-from session import sessions_iter
-from tabutils import dump_records
+from tabtools.tabutils import make_record_cls, RecordMeta
+from preprocess.session import sessions_iter
+from tabtools.tabutils import dump_records
 
 def find_last_sessions(records, max_interval):
     '''

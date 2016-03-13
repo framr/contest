@@ -1,0 +1,26 @@
+Public test dates: 2015-09-18 - 2015-09-24 (inclusive)
+
+Prepare test log:
+# rearrange columns for unix sort
+# can be also done with awk, but it messed up tab delimiters (even with -F) and I've abandoned it
+./rearrange.py log log2
+# sort file by key counter_id, uid, time
+cat log2 | sort -k 1,3 > log3
+
+# remove last line with meta
+cat log3 |head -n -1
+
+# create test based on magic procedure 
+./create_test.py ./playground/log3_nometa ./playground/meta 2015-09-11 2015-09-17
+
+# group offers in sessions
+# example:
+./sess2sent.py -i learn_5min -o learn_5min_sessions_1h_uniq --maxint 3600 --uniq
+./sess2sent.py -i learn_5min -o learn_5min_sessions_1d_uniq --maxint 86400 --uniq
+
+
+
+# handy way to grep actions
+#cat test_log | awk -F '\t' '$2 == "2015-02-15 12:00:00"'
+
+
