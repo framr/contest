@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 from itertools import groupby
 
 
-from stream.session import sessions_iter
+from preprocess.session import sessions_iter
 from tabtools.tabutils import make_record_cls, RecordMeta
 
 if __name__ == '__main__':
