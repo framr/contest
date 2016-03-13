@@ -13,6 +13,9 @@ cat log3 |head -n -1
 # create test based on magic procedure 
 ./create_test.py ./playground/log3_nometa ./playground/meta 2015-09-11 2015-09-17
 
+# remap items into integers and create feature map
+./remap_items.py -i ./data/learn_5min_1k -o ./data/learn_5min_1k_remaped --fmap ./fmap.txt --offer-field offer_id --enumerate
+
 # group offers in sessions
 # example:
 ./sess2sent.py -i learn_5min -o learn_5min_sessions_1h_uniq --maxint 3600 --uniq
