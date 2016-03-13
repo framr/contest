@@ -20,7 +20,8 @@ def stream_generator(filename, meta=None, field=None, session=False):
 
     Record = make_record_cls(meta.fields())
     for line in open(filename):
-        rec = Record(line.strip().split('\t'))
+        splitted = line.strip().split('\t')
+        rec = Record(*splitted)
         value = getattr(rec, field)
         items = value.split()
         if session:
