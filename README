@@ -16,6 +16,8 @@ cat log3 |head -n -1
 # remap items into integers and create feature map
 ./remap_items.py -i ./data/learn_5min_1k -o ./data/learn_5min_1k_remaped --fmap ./fmap.txt --offer-field offer_id --enumerate
 
+./item_stats.py ./data/learn_5min_1k_remaped > ./data/learn_5min_1k_remaped_stats   
+
 # group offers in sessions
 # example:
 ./sess2sent.py -i learn_5min -o learn_5min_sessions_1h_uniq --maxint 3600 --uniq
