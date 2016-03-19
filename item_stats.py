@@ -27,5 +27,5 @@ if __name__ == '__main__':
             stats[offer] = stats.get(offer, 0) + 1
 
     for offer in sorted(stats, key=stats.__getitem__, reverse=True):
-        print "%s\t%s\t%s\t%s" % (offer, stats[offer])
+        print "%s\t%s" % (offer, stats[offer])
 
