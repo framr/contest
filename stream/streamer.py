@@ -5,6 +5,7 @@ from collections import deque
 import random
 import os
 from itertools import chain
+import numpy as np
 
 
 from tabtools.tabutils import make_record_cls
@@ -119,27 +120,23 @@ class TokenizeTextStreamer(object):
 
 class SkipGramStreamer(object):
     def __init__(self, context_streamer, neg_pairs=1.0, window_size=5, min_window_size=None,
-        sampling_table=None, feature_map=None, shuffle=True, min_shows=None, ):
+        sampling_table=None, neg_sampling_table=None, shuffle=True, min_shows=None):
         """
         :param context_streamer:
         :param feature_map: if provided, remap words according to mapping
-        :return:
+        :return: tuples (word, context, distance between context and word positions)
         """
 
         self.shuffle = shuffle
         self.neg_pairs = neg_pairs
         self.window_size = window_size
         self.min_window_size = min_window_size
-        self.feature_map = feature_map
         self.sampling_table = sampling_table
-        #if not sampling_table:
-        #    raise ValueError("No sampling table provided, abort")
         self.context_streamer = context_streamer
 
     def __iter__(self):
         return self
     def next(self):
-
         good_context = False
         while not good_context:
             center_pos, context = next(self.context_streamer)
@@ -165,26 +162,24 @@ class SkipGramStreamer(object):
         pairs = []
         for pos in range(window_begin, window_end + 1):
             if pos != center_pos:
-                if self.feature_map is None:
-                    pairs.append((center_word, context[pos]))
-                else:
-                    pairs.append((self.feature_map[center_word], self.feature_map[context[pos]]))
+                pairs.append((center_word, context[pos], abs(pos - center_pos)))
 
         num_positives = len(pairs)
         labels = len(pairs) * [1]
 
         num_negatives = int(num_positives * self.neg_pairs)
+
         negatives = []
-        if self.feature_map:
-            negatives = [(self.feature_map[center_word], random.randint(0, len(self.feature_map) - 1))
-                for i in range(num_negatives)]
-        else:
-            negatives = [(center_word, self.sampling_table[random.randint(0, len(self.sampling_table) - 1)])
-                for i in range(num_negatives)]
+        multi = np.random.multinomial(num_negatives, self.neg_sampling_table[0])
+        for index in np.nonzero(multi):
+            negatives.extend(
+                [(center_word, self.neg_sampling_table[1][index], 0) for i in range(multi[index])]
+            )
+
+
 
         labels += len(negatives) * [0]
         pairs += negatives
-
 
         if self.shuffle:
             tmp = zip(pairs, labels)

@@ -12,11 +12,13 @@ from tabtools.tabutils import RecordMeta, make_record_cls
 def read_feature_map(filename):
     pass
 
-def read_sampling_table(filename):
-    pass
+def read_stats_table(filename):
+    stats = {}
+    for line in open(filename):
+        splitted = line.split('\t')
+        stats[splitted[0]] = int(splitted[1])
 
-
-
+    return stats
 
 
 
