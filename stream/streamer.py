@@ -120,10 +120,11 @@ class TokenizeTextStreamer(object):
 
 class SkipGramStreamer(object):
     def __init__(self, context_streamer, neg_pairs=1.0, window_size=5, min_window_size=None,
-        sampling_table=None, neg_sampling_table=None, shuffle=True, min_shows=None):
+        sampling_table=None, neg_sampling_table=None, shuffle=True):
         """
         :param context_streamer:
         :param feature_map: if provided, remap words according to mapping
+        :param neg_sampling_table: tuple of arrays (items, probabilities)
         :return: tuples (word, context, distance between context and word positions)
         """
 
@@ -133,6 +134,8 @@ class SkipGramStreamer(object):
         self.min_window_size = min_window_size
         self.sampling_table = sampling_table
         self.context_streamer = context_streamer
+        self.neg_sampling_table = neg_sampling_table
+
 
     def __iter__(self):
         return self
@@ -167,16 +170,14 @@ class SkipGramStreamer(object):
         num_positives = len(pairs)
         labels = len(pairs) * [1]
 
+        # generate negative samples
         num_negatives = int(num_positives * self.neg_pairs)
-
         negatives = []
-        multi = np.random.multinomial(num_negatives, self.neg_sampling_table[0])
+        sample_from_neg_table = np.random.multinomial(num_negatives, self.neg_sampling_table[1])
         for index in np.nonzero(multi):
             negatives.extend(
-                [(center_word, self.neg_sampling_table[1][index], 0) for i in range(multi[index])]
+                [(center_word, self.neg_sampling_table[0][index], 0) for i in range(sample_from_neg_table[index])]
             )
-
-
 
         labels += len(negatives) * [0]
         pairs += negatives
@@ -251,6 +252,11 @@ if __name__ == '__main__':
     sampling_table = dict(zip(flattened,  len(flattened) * [1.0]))
     print stream, feature_map
     print "Testing skipgrams"
+
+
+    """
+    broken
+    """
 
     print "window size = 1"
     streamer = SessionContextStreamer(stream)

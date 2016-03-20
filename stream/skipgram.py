@@ -1,6 +1,7 @@
 import sys
 from argparse import ArgumentParser
 from math import sqrt
+from itertools import izip
 
 
 from stream.streamer import SymmetricContextStreamer, SessionContextStreamer, stream_generator, Batch2BatchStreamer, SkipGramStreamer
@@ -11,31 +12,39 @@ from preprocess.preprocessing import read_stats_table, read_feature_map
 #XXX: Currently, there is no particular reason why this const is not zero.
 WINDOW_CONTEXT_MARGIN = 5
 
-def create_sampling_table(stats, min_freq=1e-5, min_shows=0, formula='mikolov'):
+def create_sampling_tables(stats, min_freq=1e-5, min_shows=0, formula='mikolov', neg_power=0.75):
     """
     :param stats: statistics for each item
     :param min_freq:
     :param min_shows:
     :param formula:
-    :return: table of probabilities for each word.
+    :return: sampling table for positives, negative items, neg probabilities)
     """
 
     if formula != 'mikolov':
         raise NotImplementedError
 
-    sampling_table = {}
+    neg_probabilities = []
+    neg_items = []
+    pos_sampling_table = {}
     total_count = 0
+    neg_sum = 0
     for item, count in stats.iteritems():
         total_count += count
+        neg_sum += count**(neg_power)
 
     for item, count in stats.iteritems():
         freq = float(count) / total_count
-        sampling_table[item] = 1 - sqrt(min_freq / freq) # Mikolov's formula
-
+        pos_sampling_table[item] = 1 - sqrt(min_freq / freq)
         if count < min_shows:
-            sampling_table[item] = 0
+            pos_sampling_table[item] = 0
 
-    return sampling_table
+        neg_probabilities.append(count**neg_power / neg_sum)
+        neg_items.append(item)
+
+    return pos_sampling_table, neg_items, neg_probabilities
+
+
 
 if __name__ == '__main__':
 
@@ -78,17 +87,18 @@ if __name__ == '__main__':
 
     #feature_map = read_feature_map(args.sampling_table)
     stats_table = read_stats_table(args.sampling_table)
-    sampling_table = create_sampling_table(stats_table, min_freq=args.sampling_min_freq, min_shows=args.min_shows)
+    sampling_table, neg_items, neg_probabilities = create_sampling_tables(
+        stats_table, min_freq=args.sampling_min_freq, min_shows=args.min_shows)
 
     skipgram_streamer = SkipGramStreamer(context_streamer, neg_pairs=args.neg_pairs, window_size=args.window,
-        sampling_table=sampling_table)
+        sampling_table=sampling_table, neg_sampling_table=(neg_items, neg_probabilities))
 
-    sampling_table = preprocessing.read_sampling_table()
-    num_features = len(sampling_table)
 
-    for i, seq in enumerate(streamer):
-        # get skipgram couples for one text in the dataset
-        couples, labels = sequence.skipgrams(seq)
+    with open(args.outfile, 'w') as outfile:
+        for samples, labels in enumerate(skipgram_streamer):
+            for (word, context, distance), label in izip(samples, labels):
+                outfile.write("%s\t%s\t%s\t%s\n" % (word, context, label, distance))
+
 
 
 
